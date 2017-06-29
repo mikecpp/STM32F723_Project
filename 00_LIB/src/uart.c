@@ -5,9 +5,9 @@
 #define UART_MAX_COUNT     6
 
 #define UART_TX_TIMEOUT    1000    // 1 sec
-#define UART_RX_TIMEOUT    1000    // 1 sec
+#define UART_RX_TIMEOUT    1000    // 1 sec 
 
-static UART_ID m_consol_id          = UART_2;            // consol port  
+static UART_ID m_consol_id          = UART_6;            // consol port  
 
 UART_HandleTypeDef UartHandle[UART_MAX_COUNT];
 
@@ -48,7 +48,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
         }
     }    
 
-#ifdef STM32F412Zx  
     // USART6
     if(UartHandle->Instance == USART6) {
         fifo_write(m_handle_6, &m_ch_6, 1);
@@ -56,7 +55,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
             printf("HAL_UART6_Receive_IT() Fail !!!\r\n");
         }
     }  
-#endif    
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,11 +72,9 @@ int uart_init(UART_ID id, uint32_t baud_rate)
         case UART_3:
             UartHandle[id].Instance = USART3;
             break;
-#ifdef STM32F412Zx
         case UART_6:
             UartHandle[id].Instance = USART6;
             break;
-#endif        
         default:
             return -1;
     }    
@@ -108,13 +104,11 @@ int uart_init(UART_ID id, uint32_t baud_rate)
         }
     }
     
-#ifdef STM32F412Zx
     if(id == UART_6) {
         if(HAL_UART_Receive_IT(&UartHandle[id], (uint8_t *)&m_ch_6, 1) != HAL_OK) {
             printf("HAL_UART_Receive_IT fail !!! \r\n");
         }
     }
-#endif
     
     return 0;
 }

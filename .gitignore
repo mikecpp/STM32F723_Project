@@ -1,0 +1,15 @@
+*.o
+*.d
+*.axf
+*.crf
+*.dep
+*.iex
+*.lnp
+*.lst
+*.map
+*.sct
+01_UART/UART_Printf/MDK-ARM/STM32F723E_DISCOVERY/STM32F723E_DISCOVERY.build_log.htm
+*.htm
+*.lnp
+*.map
+*.dep

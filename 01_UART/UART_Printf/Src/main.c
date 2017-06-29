@@ -1,95 +1,33 @@
 #include "main.h"
+#include "stm32f723_system.h"
+#include "uart.h"
 
-#define TRANSMITTER_BOARD
-
-UART_HandleTypeDef UartHandle;
-
-void SystemClock_Config(void);
 static void CPU_CACHE_Enable(void);
 
 int main(void)
 {
-  CPU_CACHE_Enable();
+    int count = 0;
+    
+    CPU_CACHE_Enable();
 
-  HAL_Init();
-
-  SystemClock_Config();
-  
-  BSP_LED_Init(LED6);
-  BSP_LED_Init(LED5);
-
-  UartHandle.Instance        = USARTx;
-
-  UartHandle.Init.BaudRate     = 115200;
-  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits     = UART_STOPBITS_1;
-  UartHandle.Init.Parity       = UART_PARITY_NONE;
-  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode         = UART_MODE_TX_RX;
-  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-  HAL_UART_Init(&UartHandle);
-
-  while (1)
-  {
-  }
+    system_init();
+      
+    if(uart_init(UART_6, 115200) != 0) {
+        return -1;
+    }
+    uart_consol(UART_6);
+    
+    printf("Hello Mike !\r\n");
+    
+    while (1)
+    {
+        printf("Count = %d \r\n", count++);
+        delay_ms(1000);
+    }
 }
 
-/**
-  * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
-  *            System Clock source            = PLL (HSE)
-  *            SYSCLK(Hz)                     = 216000000
-  *            HCLK(Hz)                       = 216000000
-  *            AHB Prescaler                  = 1
-  *            APB1 Prescaler                 = 4
-  *            APB2 Prescaler                 = 2
-  *            HSE Frequency(Hz)              = 25000000
-  *            PLL_M                          = 25
-  *            PLL_N                          = 432
-  *            PLL_P                          = 2
-  *            PLL_Q                          = 9
-  *            VDD(V)                         = 3.3
-  *            Main regulator output voltage  = Scale1 mode
-  *            Flash Latency(WS)              = 7
-  * @param  None
-  * @retval None
-  */
-void SystemClock_Config(void)
+static void CPU_CACHE_Enable(void)
 {
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  
-  /* Enable HSE Oscillator and activate PLL with HSE as source */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
-  RCC_OscInitStruct.PLL.PLLN = 432;  
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 9;
-  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    while(1) {};
-  }
-  
-  /* Activate the OverDrive to reach the 216 Mhz Frequency */
-  if(HAL_PWREx_EnableOverDrive() != HAL_OK)
-  {
-    while(1) {};
-  }
-  
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
-     clocks dividers */
-  RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;  
-  if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
-  {
-    while(1) {};
-  }
+    SCB_EnableICache();
+    SCB_EnableDCache();
 }

@@ -31,3 +31,5 @@ stm32f723e_discovery\main.o: ../../../../../../Drivers/STM32F7xx_HAL_Driver/Inc/
 stm32f723e_discovery\main.o: ../../../../../../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h
 stm32f723e_discovery\main.o: ../../../../../../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h
 stm32f723e_discovery\main.o: ../../../../../../Drivers/BSP/STM32F723E-Discovery/stm32f723e_discovery.h
+stm32f723e_discovery\main.o: ..\..\..\00_BSP\stm32f723_system.h
+stm32f723e_discovery\main.o: ..\..\..\00_LIB\inc\uart.h

@@ -17,6 +17,11 @@
     #include "stm32f4xx_hal_uart.h"
 #endif
 
+#if defined(STM32F723xx)
+    #include "stm32f7xx_hal.h"
+    #include "stm32f7xx_hal_uart.h"
+#endif
+
 #ifdef __cplusplus
  extern "C" {
 #endif

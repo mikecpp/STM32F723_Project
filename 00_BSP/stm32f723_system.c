@@ -1,4 +1,6 @@
 #include "stm32f723_system.h"
+#include "stm32f723_uart.h"
+#include "stm32f723_i2c.h"
 
 static void SystemClock_Config(void);
 
@@ -73,4 +75,118 @@ void SystemClock_Config(void)
     {
         while(1) {};
     }
+}
+
+void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+{  
+    GPIO_InitTypeDef  GPIO_InitStruct;
+  
+    // UART_2
+    USART2_TX_GPIO_CLK_ENABLE();
+    USART2_RX_GPIO_CLK_ENABLE();
+
+    USART2_CLK_ENABLE(); 
+  
+    GPIO_InitStruct.Pin       = USART2_TX_PIN;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStruct.Alternate = USART2_TX_AF;
+
+    HAL_GPIO_Init(USART2_TX_GPIO_PORT, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin       = USART2_RX_PIN;
+    GPIO_InitStruct.Alternate = USART2_RX_AF;
+
+    HAL_GPIO_Init(USART2_RX_GPIO_PORT, &GPIO_InitStruct);
+    
+    // UART_6
+    USART6_TX_GPIO_CLK_ENABLE();
+    USART6_RX_GPIO_CLK_ENABLE();
+
+    USART6_CLK_ENABLE();
+
+    GPIO_InitStruct.Pin       = USART6_TX_PIN;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = USART6_TX_AF;
+
+    HAL_GPIO_Init(USART6_TX_GPIO_PORT, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin       = USART6_RX_PIN;
+    GPIO_InitStruct.Alternate = USART6_RX_AF;
+
+    HAL_GPIO_Init(USART6_RX_GPIO_PORT, &GPIO_InitStruct);    
+}
+
+void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
+{
+    // UART_2    
+    USART2_FORCE_RESET();
+    USART2_RELEASE_RESET();
+
+    HAL_GPIO_DeInit(USART2_TX_GPIO_PORT, USART2_TX_PIN);
+    HAL_GPIO_DeInit(USART2_RX_GPIO_PORT, USART2_RX_PIN);
+    
+    // UART_6
+    USART6_FORCE_RESET();
+    USART6_RELEASE_RESET();
+
+    HAL_GPIO_DeInit(USART6_TX_GPIO_PORT, USART6_TX_PIN);
+    HAL_GPIO_DeInit(USART6_RX_GPIO_PORT, USART6_RX_PIN);
+}
+
+void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
+{
+    GPIO_InitTypeDef  GPIO_InitStruct;
+    
+    I2C1_SCL_GPIO_CLK_ENABLE(); 
+    I2C1_SDA_GPIO_CLK_ENABLE();
+
+    I2C1_CLK_ENABLE(); 
+
+    GPIO_InitStruct.Pin       = I2C1_SCL_PIN;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = I2C1_SCL_AF;
+    HAL_GPIO_Init(I2C1_SCL_GPIO_PORT, &GPIO_InitStruct);      
+
+    GPIO_InitStruct.Pin       = I2C1_SDA_PIN;
+    GPIO_InitStruct.Alternate = I2C1_SDA_AF;
+    
+    HAL_GPIO_Init(I2C1_SDA_GPIO_PORT, &GPIO_InitStruct);    
+    
+    I2C2_SCL_GPIO_CLK_ENABLE(); 
+    I2C2_SDA_GPIO_CLK_ENABLE();
+
+    I2C2_CLK_ENABLE(); 
+
+    GPIO_InitStruct.Pin       = I2C2_SCL_PIN;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull      = GPIO_PULLUP;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = I2C2_SCL_AF;
+    HAL_GPIO_Init(I2C2_SCL_GPIO_PORT, &GPIO_InitStruct);      
+
+    GPIO_InitStruct.Pin       = I2C2_SDA_PIN;
+    GPIO_InitStruct.Alternate = I2C2_SDA_AF;
+    
+    HAL_GPIO_Init(I2C2_SDA_GPIO_PORT, &GPIO_InitStruct);    
+}
+
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef *hi2c)
+{
+    I2C1_FORCE_RESET();
+    I2C1_RELEASE_RESET();
+
+    HAL_GPIO_DeInit(I2C1_SCL_GPIO_PORT, I2C1_SCL_PIN);
+    HAL_GPIO_DeInit(I2C1_SDA_GPIO_PORT, I2C1_SDA_PIN);
+
+    I2C2_FORCE_RESET();
+    I2C2_RELEASE_RESET();
+
+    HAL_GPIO_DeInit(I2C2_SCL_GPIO_PORT, I2C2_SCL_PIN);
+    HAL_GPIO_DeInit(I2C2_SDA_GPIO_PORT, I2C2_SDA_PIN);
 }

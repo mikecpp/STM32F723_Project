@@ -377,16 +377,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Doc</GroupName>
-          <Files>
-            <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>../readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers/STM32F7xx_HAL_Driver</GroupName>
           <Files>
             <File>
@@ -508,16 +498,6 @@
               <FileName>stm32f723_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\00_BSP\stm32f723_system.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f723_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\00_BSP\stm32f723_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f723_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\00_BSP\stm32f723_i2c.c</FilePath>
             </File>
           </Files>
         </Group>

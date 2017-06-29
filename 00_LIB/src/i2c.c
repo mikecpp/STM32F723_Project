@@ -5,7 +5,8 @@
 #define I2C_MAX_NUM         4
 #define I2C_ADDRESS         0x3C << 1
 // #define I2C_TIMING       0x00C4092A      // 1M Hz
-#define I2C_TIMING          0x004E6A10      // 400K Hz
+#define I2C_TIMING          0x00E0257A      // 400K Hz
+// #define I2C_TIMING       0x10C08DCF      // 100K Hz
 #define I2C_TIMEOUT         10000           // 1 second
 
 I2C_HandleTypeDef m_i2c_handle[I2C_MAX_NUM];

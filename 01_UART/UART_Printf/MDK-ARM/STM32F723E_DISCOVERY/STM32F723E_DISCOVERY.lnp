@@ -1,0 +1,25 @@
+--cpu Cortex-M7.fp.sp
+"stm32f723e_discovery\stm32f7xx_hal_cortex.o"
+"stm32f723e_discovery\stm32f7xx_hal_dma_ex.o"
+"stm32f723e_discovery\stm32f7xx_ll_fmc.o"
+"stm32f723e_discovery\stm32f7xx_hal_uart.o"
+"stm32f723e_discovery\stm32f7xx_hal_rcc.o"
+"stm32f723e_discovery\stm32f7xx_hal_dma.o"
+"stm32f723e_discovery\stm32f7xx_hal_pwr_ex.o"
+"stm32f723e_discovery\stm32f7xx_hal_rcc_ex.o"
+"stm32f723e_discovery\stm32f7xx_hal_i2c.o"
+"stm32f723e_discovery\stm32f7xx_hal_pwr.o"
+"stm32f723e_discovery\stm32f7xx_hal.o"
+"stm32f723e_discovery\stm32f7xx_hal_i2c_ex.o"
+"stm32f723e_discovery\stm32f7xx_hal_gpio.o"
+"stm32f723e_discovery\stm32f7xx_hal_sram.o"
+"stm32f723e_discovery\main.o"
+"stm32f723e_discovery\stm32f7xx_it.o"
+"stm32f723e_discovery\stm32f7xx_hal_msp.o"
+"stm32f723e_discovery\stm32f723e_discovery.o"
+"stm32f723e_discovery\startup_stm32f723xx.o"
+"stm32f723e_discovery\system_stm32f7xx.o"
+--library_type=microlib --strict --scatter "STM32F723E_DISCOVERY\STM32F723E_DISCOVERY.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "./STM32F723E_DISCOVERY/\STM32F723E_DISCOVERY.map" -o STM32F723E_DISCOVERY\STM32F723E_DISCOVERY.axf

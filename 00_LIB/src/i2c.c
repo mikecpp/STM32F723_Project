@@ -1,11 +1,12 @@
 #include <stdio.h>
 
-#include "i2c.h"
+#include "i2c.h" 
 
 #define I2C_MAX_NUM         4
 #define I2C_ADDRESS         0x3C << 1
-#define I2C_SPEEDCLOCK      400000 
-#define I2C_TIMEOUT         10000    // 1 second
+// #define I2C_TIMING       0x00C4092A      // 1M Hz
+#define I2C_TIMING          0x004E6A10      // 400K Hz
+#define I2C_TIMEOUT         10000           // 1 second
 
 I2C_HandleTypeDef m_i2c_handle[I2C_MAX_NUM];
 
@@ -33,8 +34,7 @@ int i2c_init(uint8_t id)
 {
     I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);
 
-    p_i2c_handle->Init.ClockSpeed      = I2C_SPEEDCLOCK; 
-    p_i2c_handle->Init.DutyCycle       = I2C_DUTYCYCLE_2;
+    p_i2c_handle->Init.Timing          = I2C_TIMING; 
     p_i2c_handle->Init.OwnAddress1     = 0x00;
     p_i2c_handle->Init.OwnAddress2     = 0x00;
     p_i2c_handle->Init.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;

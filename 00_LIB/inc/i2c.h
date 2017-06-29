@@ -1,35 +1,9 @@
 #ifndef __I2C_H__
 #define __I2C_H__
 
-#ifdef STM32L476xx
-    #include "stm32l4xx_hal.h"
-    #include "stm32l4xx_hal_i2c.h"
-    #include "stm32l476_system.h"
-#endif
-
-#ifdef STM32F103xE
-    #include "stm32f1xx_hal.h"
-    #include "stm32f1xx_hal_i2c.h"
-    #include "stm32f103_system.h"
-#endif
-
-#ifdef STM32F412Zx
-    #include "stm32f4xx_hal.h"
-    #include "stm32f4xx_hal_i2c.h"
-    #include "stm32f412_system.h"    
-#endif
-
-#ifdef STM32F429xx
-    #include "stm32f4xx_hal.h"
-    #include "stm32f4xx_hal_i2c.h"
-    #include "stm32f429_system.h"    
-#endif
-
-#ifdef STM32F407xx
-    #include "stm32f4xx_hal.h"
-    #include "stm32f4xx_hal_i2c.h"
-    #include "stm32f407_system.h"    
-#endif
+#include "stm32f7xx_hal.h"
+#include "stm32f7xx_hal_i2c.h"
+#include "stm32f723_system.h"    
 
 typedef enum {
     I2C_1,

@@ -1,77 +1,26 @@
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F7xx_HAL_Examples
-  * @{
-  */
-
-/** @addtogroup UART_TwoBoards_ComPolling
-  * @{
-  */ 
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
 #define TRANSMITTER_BOARD
 
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* UART handler declaration */
 UART_HandleTypeDef UartHandle;
-__IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
 
-/* Buffer used for transmission */
-uint8_t aTxBuffer[] = " **** UART_TwoBoards_ComPolling ****  **** UART_TwoBoards_ComPolling ****  **** UART_TwoBoards_ComPolling **** ";
-
-/* Buffer used for reception */
-uint8_t aRxBuffer[RXBUFFERSIZE];
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void Error_Handler(void);
-static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
 static void CPU_CACHE_Enable(void);
 
-/* Private functions ---------------------------------------------------------*/
-
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 int main(void)
 {
-  /* Enable the CPU Cache */
   CPU_CACHE_Enable();
-  /* STM32F7xx HAL library initialization:
-       - Configure the Flash ART accelerator
-       - Systick timer is configured by default as source of time base, but user 
-         can eventually implement his proper time base source (a general purpose 
-         timer for example or other time source), keeping in mind that Time base 
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
-         handled in milliseconds basis.
-       - Set NVIC Group Priority to 4
-       - Low Level Initialization
-     */
+
   HAL_Init();
 
-  /* Configure the system clock to 216 MHz */
   SystemClock_Config();
   
-  /* Configure LED6 and LED5 */
   BSP_LED_Init(LED6);
   BSP_LED_Init(LED5);
 
-  /*##-1- Configure the UART peripheral ######################################*/
-  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-  /* UART configured as follows:
-      - Word Length = 8 Bits
-      - Stop Bit = One Stop bit
-      - Parity = None
-      - BaudRate = 9600 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
   UartHandle.Instance        = USARTx;
 
-  UartHandle.Init.BaudRate     = 9600;
+  UartHandle.Init.BaudRate     = 115200;
   UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
   UartHandle.Init.StopBits     = UART_STOPBITS_1;
   UartHandle.Init.Parity       = UART_PARITY_NONE;
@@ -80,83 +29,8 @@ int main(void)
   UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
   UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
 
-  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }  
-  if(HAL_UART_Init(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  
-#ifdef TRANSMITTER_BOARD
+  HAL_UART_Init(&UartHandle);
 
-  /* Configure User/WakeUp push-button in Interrupt mode */
-  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
-  
-  /* Wait for User/WakeUp push-button press before starting the Communication.
-     In the meantime, LED6 is blinking */
-  while(UserButtonStatus == 0)
-  {
-      /* Toggle LED6*/
-      BSP_LED_Toggle(LED6); 
-      HAL_Delay(100);
-  }
-  
-  BSP_LED_Off(LED6); 
-  /* The board sends the message and expects to receive it back */
-  
-  /*##-2- Start the transmission process #####################################*/  
-  /* While the UART in reception process, user can transmit data through 
-     "aTxBuffer" buffer */
-  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
-  {
-    Error_Handler();   
-  }
-  
-  /* Turn LED6 on: Transfer in transmission process is correct */
-  BSP_LED_On(LED6);
-  
-  /*##-3- Put UART peripheral in reception process ###########################*/  
-  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 5000) != HAL_OK)
-  {
-    Error_Handler();  
-  }
-   
- 
-#else
-  
-  /* The board receives the message and sends it back */
-
-  /*##-2- Put UART peripheral in reception process ###########################*/
-  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 0x1FFFFFF) != HAL_OK)
-  {
-    Error_Handler();
-  }
- 
-  /* Turn LED6 on: Transfer in reception process is correct */
-  BSP_LED_On(LED6);
-  
-  /*##-3- Start the transmission process #####################################*/  
-  /* While the UART in reception process, user can transmit data through 
-     "aTxBuffer" buffer */
-  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
-  {
-    Error_Handler();
-  }
-  
-  
-#endif /* TRANSMITTER_BOARD */
-  
-  /*##-4- Compare the sent and received buffers ##############################*/
-  if(Buffercmp((uint8_t*)aTxBuffer,(uint8_t*)aRxBuffer,RXBUFFERSIZE))
-  {
-    Error_Handler();
-  }
-   
-  /* Turn on LED5 if test passes then enter infinite loop */
-  BSP_LED_On(LED5); 
-  /* Infinite loop */
   while (1)
   {
   }
@@ -207,7 +81,6 @@ void SystemClock_Config(void)
     while(1) {};
   }
   
-  
   /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
      clocks dividers */
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
@@ -220,111 +93,3 @@ void SystemClock_Config(void)
     while(1) {};
   }
 }
-/**
-  * @brief  UART error callbacks
-  * @param  UartHandle: UART handle
-  * @note   This example shows a simple way to report transfer error, and you can
-  *         add your own implementation.
-  * @retval None
-  */
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
-{
-    Error_Handler();
-}
-
-
-/**
-  * @brief EXTI line detection callbacks
-  * @param GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if(GPIO_Pin == WAKEUP_BUTTON_PIN)
-  {  
-    UserButtonStatus = 1;
-  }
-}
-/**
-  * @brief  Compares two buffers.
-  * @param  pBuffer1, pBuffer2: buffers to be compared.
-  * @param  BufferLength: buffer's length
-  * @retval 0  : pBuffer1 identical to pBuffer2
-  *         >0 : pBuffer1 differs from pBuffer2
-  */
-static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
-{
-  while (BufferLength--)
-  {
-    if ((*pBuffer1) != *pBuffer2)
-    {
-      return BufferLength;
-    }
-    pBuffer1++;
-    pBuffer2++;
-  }
-
-  return 0;
-}
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-static void Error_Handler(void)
-{
-  /* Turn LED6 on */
-  BSP_LED_On(LED6);
-  while(1)
-  {
-    /* Error if LED6 is slowly blinking (1 sec. period) */
-    BSP_LED_Toggle(LED6); 
-    HAL_Delay(1000); 
-  }
-}
-
-#ifdef  USE_FULL_ASSERT
-
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
-}
-#endif
-
-/**
-  * @brief  CPU L1-Cache enable.
-  * @param  None
-  * @retval None
-  */
-static void CPU_CACHE_Enable(void)
-{
-  /* Enable I-Cache */
-  SCB_EnableICache();
-
-  /* Enable D-Cache */
-  SCB_EnableDCache();
-}
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -4,7 +4,6 @@
 
 static void CPU_CACHE_Enable(void);
 
-
 int main(void)
 {
     int count = 0;

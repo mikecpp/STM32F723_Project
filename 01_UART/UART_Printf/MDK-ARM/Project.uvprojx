@@ -335,7 +335,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F723xx,USE_STM32F723E_DISCOVERY</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../../../../../../Drivers/CMSIS/Device/ST/STM32F7xx/Include;../../../../../../Drivers/STM32F7xx_HAL_Driver/Inc;../../../../../../Drivers/BSP/STM32F723E-Discovery;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/Log;../../../../../../Utilities/Fonts;../../../../../../Utilities/CPU</IncludePath>
+              <IncludePath>../Inc;../../../../../../Drivers/CMSIS/Device/ST/STM32F7xx/Include;../../../../../../Drivers/STM32F7xx_HAL_Driver/Inc;../../../../../../Drivers/BSP/STM32F723E-Discovery;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/Log;../../../../../../Utilities/Fonts;../../../../../../Utilities/CPU;..\..\..\00_BSP;..\..\..\00_LIB\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -475,9 +475,14 @@
               <FilePath>../Src/stm32f7xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f7xx_hal_msp.c</FileName>
+              <FileName>fifo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Src/stm32f7xx_hal_msp.c</FilePath>
+              <FilePath>..\..\..\00_LIB\src\fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\00_LIB\src\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -488,6 +493,16 @@
               <FileName>stm32f723e_discovery.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/BSP/STM32F723E-Discovery/stm32f723e_discovery.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f723_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\00_BSP\stm32f723_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f723_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\00_BSP\stm32f723_uart.c</FilePath>
             </File>
           </Files>
         </Group>

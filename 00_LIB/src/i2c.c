@@ -1,104 +1,64 @@
 #include <stdio.h>
-
 #include "i2c.h" 
+#include "stm32_i2c.h"
 
-#define I2C_MAX_NUM         4
-#define I2C_ADDRESS         0x3C << 1
-// #define I2C_TIMING       0x00C4092A      // 1M Hz
-#define I2C_TIMING          0x00E0257A      // 400K Hz
-// #define I2C_TIMING       0x10C08DCF      // 100K Hz
-#define I2C_TIMEOUT         10000           // 1 second
+I2C_Driver_T *m_i2c_drv = NULL;
 
-I2C_HandleTypeDef m_i2c_handle[I2C_MAX_NUM];
-
-I2C_HandleTypeDef* i2c_handle(uint8_t id)
+int32_t i2c_register_driver(I2C_Driver_T *i2c_driver)
 {
-    I2C_HandleTypeDef *p_i2c_handle = NULL; 
-    
-    switch(id) {
-        case I2C_1:
-            p_i2c_handle = &m_i2c_handle[0]; 
-            p_i2c_handle->Instance = I2C1;  
-            break;
-        case I2C_2:
-            p_i2c_handle = &m_i2c_handle[1];
-            p_i2c_handle->Instance = I2C2;
-            break;
-        default: 
-            return NULL;
-    }
-       
-    return p_i2c_handle;
-}
-
-int i2c_init(uint8_t id)
-{
-    I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);
-
-    p_i2c_handle->Init.Timing          = I2C_TIMING; 
-    p_i2c_handle->Init.OwnAddress1     = 0x00;
-    p_i2c_handle->Init.OwnAddress2     = 0x00;
-    p_i2c_handle->Init.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;
-    p_i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-    p_i2c_handle->Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-    p_i2c_handle->Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;  
-  
-    if(HAL_I2C_Init(p_i2c_handle) != HAL_OK) {
-        return -1;
-    }
-
-    return 0;
-}
-
-int i2c_write_byte(uint8_t id, uint8_t addr, uint8_t value)
-{
-    I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);
-   
-    if(HAL_I2C_Master_Transmit(p_i2c_handle, addr, (uint8_t*) &value, 1, I2C_TIMEOUT) != HAL_OK) {
-        return -1;
-    }    
+    m_i2c_drv = i2c_driver;
     
     return 0;
 }
 
-int i2c_read_byte(uint8_t id, uint8_t addr, uint8_t *value)
+int32_t i2c_init(uint8_t id)
 {
-    I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);    
-    
-    if(HAL_I2C_Master_Receive(p_i2c_handle, addr, value, 1, I2C_TIMEOUT) != HAL_OK) {
+    i2c_register_driver(&stm32_i2c_drv); // Register STM32 I2C Driver 
+
+    if(m_i2c_drv == NULL) {
         return -1;
     }    
-
-    return 0;
+    
+    return m_i2c_drv->i2c_init(id);
 }
 
-int i2c_write(uint8_t id, uint8_t addr, uint8_t *buf, int len)
-{
-    I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);    
-    uint32_t ret;
-    
-    if(HAL_I2C_Master_Transmit(p_i2c_handle, addr, buf, len, I2C_TIMEOUT) != HAL_OK) {
-        ret = HAL_I2C_GetError(p_i2c_handle);
-        return ret;
-    }    
-    
-    return 0; 
+int32_t i2c_write_byte(uint8_t id, uint8_t addr, uint8_t value)
+{ 
+    if(m_i2c_drv == NULL) {
+        return -1;
+    }
+
+    return m_i2c_drv->i2c_write_byte(id, addr, value);
 }
 
-int i2c_read(uint8_t id, uint8_t addr, uint8_t *buf, int len) 
+int32_t i2c_read_byte(uint8_t id, uint8_t addr, uint8_t *value)
 {
-    I2C_HandleTypeDef *p_i2c_handle = i2c_handle(id);    
-    uint32_t ret;   
-    
-    if(HAL_I2C_Master_Receive(p_i2c_handle, addr, buf, len, I2C_TIMEOUT) != HAL_OK) {
-        ret = HAL_I2C_GetError(p_i2c_handle); 
-        return ret;
+    if(m_i2c_drv == NULL) {
+        return -1;
+    }
+
+    return m_i2c_drv->i2c_read_byte(id, addr, value);
+}
+
+int32_t i2c_write(uint8_t id, uint8_t addr, uint8_t *buf, int32_t len)
+{
+    if(m_i2c_drv == NULL) {
+        return -1;
     }
     
-    return 0;    
+    return m_i2c_drv->i2c_write(id, addr, buf, len); 
 }
 
-int i2c_write_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t value)
+int32_t i2c_read(uint8_t id, uint8_t addr, uint8_t *buf, int32_t len) 
+{
+    if(m_i2c_drv == NULL) {
+        return -1;
+    }
+    
+    return m_i2c_drv->i2c_read(id, addr, buf, len);    
+}
+
+int32_t i2c_write_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t value)
 {
     uint32_t ret_code;
     uint8_t buf[2];
@@ -111,7 +71,7 @@ int i2c_write_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t value)
     return ret_code;
 }
 
-int i2c_read_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t *value)
+int32_t i2c_read_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t *value)
 {
     uint32_t ret_code;
     
@@ -121,7 +81,7 @@ int i2c_read_reg(uint8_t id, uint8_t addr, uint8_t reg, uint8_t *value)
     return ret_code;
 }
 
-int i2c_write_reg_word(uint8_t id, uint8_t addr, uint8_t reg, uint16_t value)
+int32_t i2c_write_reg_word(uint8_t id, uint8_t addr, uint8_t reg, uint16_t value)
 {
     uint32_t ret_code;
     uint8_t buf[3];
@@ -135,7 +95,7 @@ int i2c_write_reg_word(uint8_t id, uint8_t addr, uint8_t reg, uint16_t value)
     return ret_code;
 }
 
-int i2c_read_reg_word(uint8_t id, uint8_t addr, uint8_t reg, uint16_t *value)
+int32_t i2c_read_reg_word(uint8_t id, uint8_t addr, uint8_t reg, uint16_t *value)
 {
     uint32_t ret_code;
     uint8_t buf[2];

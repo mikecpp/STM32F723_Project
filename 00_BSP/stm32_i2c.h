@@ -1,8 +1,9 @@
-#ifndef __STM32F723_I2C_H__
-#define __STM32F723_I2C_H__
+#ifndef __STM32_I2C_H__
+#define __STM32_I2C_H__
 
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_i2c.h"
+#include "i2c.h"
 
 // I2C1 (SCL: PB6, SDA: PB7)
 #define I2C1_CLK_ENABLE()               __HAL_RCC_I2C1_CLK_ENABLE()
@@ -36,4 +37,12 @@
 #define I2C2_SDA_GPIO_PORT              GPIOH
 #define I2C2_SDA_AF                     GPIO_AF4_I2C2
 
-#endif//__STM32F723_I2C_H__
+int32_t stm32_i2c_init(uint8_t id);
+int32_t stm32_i2c_write_byte(uint8_t id, uint8_t addr, uint8_t value);
+int32_t stm32_i2c_read_byte(uint8_t id, uint8_t addr, uint8_t *value);
+int32_t stm32_i2c_write(uint8_t id, uint8_t addr, uint8_t *buf, int32_t len);
+int32_t stm32_i2c_read(uint8_t id, uint8_t addr, uint8_t *buf, int32_t len);
+
+extern I2C_Driver_T stm32_i2c_drv;
+
+#endif//__STM32_I2C_H__

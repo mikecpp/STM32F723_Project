@@ -13,8 +13,6 @@ int32_t i2c_register_driver(I2C_Driver_T *i2c_driver)
 
 int32_t i2c_init(uint8_t id)
 {
-    i2c_register_driver(&stm32_i2c_drv); // Register STM32 I2C Driver 
-
     if(m_i2c_drv == NULL) {
         return -1;
     }    

@@ -1,7 +1,7 @@
 #include "main.h"
 #include "stm32f723_system.h"
 #include "uart.h"
-#include "i2c.h"
+#include "stm32_i2c.h"
 #include "oled1602.h"
 
 static void CPU_CACHE_Enable(void)
@@ -20,6 +20,8 @@ int main(void)
     system_init();
     uart_init(UART_6, 115200);
     uart_consol(UART_6);
+    
+    i2c_register_driver(&stm32_i2c_drv);     
     oled1602_init(I2C_2);
     
     printf("Hello Mike !\r\n");

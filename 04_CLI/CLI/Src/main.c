@@ -17,7 +17,7 @@ int main(void)
     uart_consol(UART_6);
     cli_init(UART_6);
     
-    printf("Hello Mike !\r\n");
+    printf("Start CLI ...\r\n");
     
     while (1)
     {

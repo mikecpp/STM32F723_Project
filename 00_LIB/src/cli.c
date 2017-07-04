@@ -119,11 +119,12 @@ int cli_exec(char *string)
 }
 
 typedef enum {
+    CLI_STATE_INIT,
     CLI_STATE_INPUT,
     CLI_STATE_EXEC
 } CLI_State_T;
 
-CLI_State_T cli_state = CLI_STATE_INPUT; 
+CLI_State_T cli_state = CLI_STATE_INIT; 
 
 void cli_process(void)  
 {
@@ -132,6 +133,11 @@ void cli_process(void)
     char ch;
 
     switch(cli_state) { 
+        case CLI_STATE_INIT:
+             printf(CLI_PROMPT);
+             cli_state = CLI_STATE_INPUT;
+             break;
+        
         case CLI_STATE_INPUT:
              while(uart_available(m_uart_id)) {
                  ch = uart_getchar(m_uart_id);
@@ -157,8 +163,10 @@ void cli_process(void)
              break;
              
         case CLI_STATE_EXEC:
+             printf("\r\n");
              cli_exec(cmd);
              cli_state = CLI_STATE_INPUT;
+             printf(CLI_PROMPT);
              break;
         
         default:

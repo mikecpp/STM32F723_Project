@@ -19,47 +19,12 @@ typedef struct {
     char help[HELP_LEN];
 } cli_cmd_t;
 
-static int cli_gets(char *cmd);
 static int cli_parse_str(char *str, char *param[]);
 static int cli_help(int argc, char *argv[]);
 
 static cli_cmd_t m_cmd_table[MAX_CLI_COUNT];
 UART_ID          m_uart_id;
 static int       m_count = 0;
-
-int cli_gets(char *cmd)
-{
-    char ch;
-    int  i = 0;
-
-    while(1)
-    {
-        ch = uart_getchar(m_uart_id);
-        switch (ch) {
-            case '\r':
-            case '\n':
-                cmd[i] = '\0';
-                if(ch == '\r' || ch == '\n')
-                {
-                    printf("\r\n");
-                    return 0;
-                }
-                break;
-            case 127:       // Back-Space
-                printf("%c", ch);
-                if (i > 0) {
-                    i--;
-                }
-                break;
-            default:
-                if(i >= MAX_STR_LEN) {
-                    break;
-                }
-                cmd[i++] = ch;
-                printf("%c", ch);
-        }
-    }
-}
 
 int cli_parse_str(char *str, char *param[]) 
 {
@@ -153,14 +118,50 @@ int cli_exec(char *string)
     return 0;
 }
 
-int cli_task(void)
-{
-    char str[MAX_STR_LEN];
+typedef enum {
+    CLI_STATE_INPUT,
+    CLI_STATE_EXEC
+} CLI_State_T;
 
-    while(1) 
-    {
-        printf(CLI_PROMPT);
-        cli_gets((char*) &str);
-        cli_exec(str);
+CLI_State_T cli_state = CLI_STATE_INPUT; 
+
+void cli_process(void)  
+{
+    static int i = 0;
+    static char cmd[MAX_STR_LEN];
+    char ch;
+
+    switch(cli_state) { 
+        case CLI_STATE_INPUT:
+             while(uart_available(m_uart_id)) {
+                 ch = uart_getchar(m_uart_id);
+                 switch (ch) {
+                     case '\0':
+                         continue;
+                     
+                     case '\r':
+                     case '\n':
+                         cmd[i] = '\0';
+                         i = 0;
+                         cli_state = CLI_STATE_EXEC;
+                         break;
+                     
+                     default:
+                         if(i >= MAX_STR_LEN) {
+                             break;
+                         }
+                         cmd[i++] = ch;
+                         printf("%c", ch); 
+                 } 
+             }
+             break;
+             
+        case CLI_STATE_EXEC:
+             cli_exec(cmd);
+             cli_state = CLI_STATE_INPUT;
+             break;
+        
+        default:
+            break;
     }
 }

@@ -100,6 +100,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
     HAL_GPIO_Init(USART2_RX_GPIO_PORT, &GPIO_InitStruct);
     
+    HAL_NVIC_SetPriority(USART2_IRQn, 0, 1);
+    HAL_NVIC_EnableIRQ(USART2_IRQn);       
+    
     // UART_6
     USART6_TX_GPIO_CLK_ENABLE();
     USART6_RX_GPIO_CLK_ENABLE();
@@ -118,6 +121,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     GPIO_InitStruct.Alternate = USART6_RX_AF;
 
     HAL_GPIO_Init(USART6_RX_GPIO_PORT, &GPIO_InitStruct);    
+
+    HAL_NVIC_SetPriority(USART6_IRQn, 0, 1);
+    HAL_NVIC_EnableIRQ(USART6_IRQn);    
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)

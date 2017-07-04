@@ -8,6 +8,6 @@ typedef int (*cli_func)(int argc, char *argv[]);
 int cli_init(UART_ID id);
 int cli_register(cli_func func, char *cmd, char *help); 
 int cli_exec(char *string);
-int cli_task(void);
+void cli_process(void); 
 
 #endif//__CLI_H__

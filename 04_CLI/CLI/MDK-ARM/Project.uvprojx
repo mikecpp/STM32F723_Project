@@ -377,16 +377,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Doc</GroupName>
-          <Files>
-            <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>../readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers/STM32F7xx_HAL_Driver</GroupName>
           <Files>
             <File>
@@ -483,6 +473,11 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\00_LIB\src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>cli.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\00_LIB\src\cli.c</FilePath>
             </File>
           </Files>
         </Group>

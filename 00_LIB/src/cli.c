@@ -26,7 +26,19 @@ static cli_cmd_t m_cmd_table[MAX_CLI_COUNT];
 UART_ID          m_uart_id;
 static int       m_count = 0;
 
-int cli_parse_str(char *str, char *param[]) 
+#define CLI_PRINT(fmt, args...) fprintf(stdout, fmt, ##args) 
+#define CLI_GETCH(x)            cli_getch()
+
+static int cli_getch(void)
+{
+    while(uart_available(m_uart_id)) {
+        return uart_getchar(m_uart_id);    
+    }
+    
+    return 0;
+}
+
+static int cli_parse_str(char *str, char *param[]) 
 {
     int count = 0;
     char *ptr = NULL;
@@ -47,9 +59,9 @@ static int cli_help(int argc, char *arg[])
 {
     cli_cmd_t *ptr = m_cmd_table;
 
-    printf("command:\r\n");
+    CLI_PRINT("command:\r\n");
     while(ptr->cmd[0]) {
-        printf("%-16s: %s\r\n", ptr->cmd, ptr->help);
+        CLI_PRINT("%-16s: %s\r\n", ptr->cmd, ptr->help);
         ptr++;
     }
     
@@ -98,6 +110,10 @@ int cli_exec(char *string)
     int count = 0; 
     char *param[MAX_PARAM]; 
     
+    if(*string == '\0') {
+        return 0;
+    }
+    
     ptr   = m_cmd_table;
     count = cli_parse_str(string, param);  
     
@@ -112,7 +128,7 @@ int cli_exec(char *string)
     }
         
     if(ptr->cmd[0] == 0x00) {
-        printf(MSG_NOTFOUND);
+        CLI_PRINT(MSG_NOTFOUND);
     }
     
     return 0;
@@ -134,39 +150,37 @@ void cli_process(void)
 
     switch(cli_state) { 
         case CLI_STATE_INIT:
-             printf(CLI_PROMPT);
+             CLI_PRINT(CLI_PROMPT);
              cli_state = CLI_STATE_INPUT;
              break;
         
         case CLI_STATE_INPUT:
-             while(uart_available(m_uart_id)) {
-                 ch = uart_getchar(m_uart_id);
-                 switch (ch) {
-                     case '\0':
-                         continue;
-                     
-                     case '\r':
-                     case '\n':
-                         cmd[i] = '\0';
-                         i = 0;
-                         cli_state = CLI_STATE_EXEC;
+             ch = CLI_GETCH(); 
+             switch (ch) {
+                 case '\0':
+                     break;
+                 
+                 case '\r':
+                 case '\n':
+                     cmd[i] = '\0';
+                     i = 0;
+                     cli_state = CLI_STATE_EXEC;
+                     break;
+                 
+                 default:
+                     if(i >= MAX_STR_LEN) {
                          break;
-                     
-                     default:
-                         if(i >= MAX_STR_LEN) {
-                             break;
-                         }
-                         cmd[i++] = ch;
-                         printf("%c", ch); 
-                 } 
-             }
+                     }
+                     cmd[i++] = ch;
+                     CLI_PRINT("%c", ch); 
+             } 
              break;
              
         case CLI_STATE_EXEC:
-             printf("\r\n");
+             CLI_PRINT("\r\n");
              cli_exec(cmd);
              cli_state = CLI_STATE_INPUT;
-             printf(CLI_PROMPT);
+             CLI_PRINT(CLI_PROMPT);
              break;
         
         default:

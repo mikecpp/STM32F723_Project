@@ -22,6 +22,7 @@ int main(void)
     while (1)
     {
         cli_process();
+        delay_ms(10);
     }
 }
 

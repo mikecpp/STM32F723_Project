@@ -41,13 +41,15 @@ static char m_ch_6;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {   
     // USART2
+    /*
     if(UartHandle->Instance == USART2) {
         fifo_write(m_handle_2, &m_ch_2, 1);
         if(HAL_UART_Receive_IT(UartHandle, (uint8_t *)&m_ch_2, 1) != HAL_OK) {
             printf("HAL_UART2_Receive_IT() Fail !!!\r\n");
         }
     }    
-
+    */
+    
     // USART6
     if(UartHandle->Instance == USART6) {
         fifo_write(m_handle_6, &m_ch_6, 1);

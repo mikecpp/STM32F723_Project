@@ -18,6 +18,12 @@ void delay_ms(uint32_t millis)
     HAL_Delay(millis);
 }
 
+void CPU_CACHE_Enable(void)
+{
+    SCB_EnableICache();
+    SCB_EnableDCache();
+}
+
 /**
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow : 

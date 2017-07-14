@@ -23,7 +23,7 @@ typedef struct {
 #define GUI_COLOR_WHITE     0xFFFFFFFF
 #define GUI_COLOR_RED       0x00FF0000
 #define GUI_COLOR_GREEN     0x0000FF00
-#define GUI_COLOR_BLUE      0x00FF0000
+#define GUI_COLOR_BLUE      0x000000FF
 #define GUI_COLOR_YELLOW    0x00FFFF00
 
 typedef enum {

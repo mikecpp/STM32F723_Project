@@ -3,7 +3,6 @@
 #include "main.h"
 #include "stm32f723_system.h"
 #include "uart.h"
-#include "frame.h"
 #include "stm32f723e_discovery_lcd.h"
 #include "stm32_gui.h"
 
@@ -24,7 +23,11 @@ int main(void)
     GUI_Register(&stm32_gui_interface); 
     GUI_Init();
 
+    GUI_Clear(GUI_COLOR_BLACK); 
+    GUI_SetBackColor(GUI_COLOR_BLACK);
+    GUI_SetTextColor(GUI_COLOR_BLUE);
     GUI_DisplayStringAt(30, 30, (uint8_t*) "Hello", GUI_CENTER_MODE); 
+    GUI_SetTextColor(GUI_COLOR_YELLOW);
     GUI_DisplayStringAtLine(3, (uint8_t*) "Hello Mike");
 
     GUI_DrawRect(10, 10, 100, 100);

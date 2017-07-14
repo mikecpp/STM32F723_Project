@@ -13,6 +13,21 @@ GUI_Interface_T stm32_gui_interface =
     .GUI_DrawRGBImage   = STM32_GUI_DrawRGBImage
 };
 
+static uint16_t RGB888to565(uint32_t Color)
+{
+    uint8_t *ptr = (uint8_t*) &Color;
+    
+    uint8_t red   = ptr[2];
+    uint8_t green = ptr[1];
+    uint8_t blue  = ptr[0];
+    
+    uint16_t b = (blue >> 3)   & 0x1f;
+    uint16_t g = ((green >> 2) & 0x3f) << 5;
+    uint16_t r = ((red >> 3)   & 0x1f) << 11;
+    
+    return (uint16_t) (r | g | b);    
+}
+
 int32_t STM32_GUI_Init(void)
 {
     BSP_LCD_Init();
@@ -36,21 +51,23 @@ int32_t STM32_GUI_GetYSize(void)
 
 int32_t STM32_GUI_ReadPixel(uint16_t Xpos, uint16_t Ypos, uint32_t *Color)
 {
-    *Color = BSP_LCD_ReadPixel(Xpos, Ypos);
+    uint32_t c = BSP_LCD_ReadPixel(Xpos, Ypos);
        
+    *Color = RGB888to565(c);
+    
     return 0;
 }
 
 int32_t STM32_GUI_DrawPixel(uint16_t Xpos, uint16_t Ypos, uint32_t Color)
 {
-    BSP_LCD_DrawPixel(Xpos, Ypos, Color); 
+    BSP_LCD_DrawPixel(Xpos, Ypos, RGB888to565(Color)); 
     
     return 0;
 }
 
 int32_t STM32_GUI_Clear(uint32_t Color)
 {
-    BSP_LCD_Clear(Color);  
+    BSP_LCD_Clear(RGB888to565(Color));  
     
     return 0;
 }

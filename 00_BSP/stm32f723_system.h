@@ -6,5 +6,6 @@
 int system_init(void);
 void delay_ms(uint32_t millis);
 void CPU_CACHE_Enable(void);
+void MPU_ConfigPSRAM(void);
 
 #endif//__SYSTEM_H__

@@ -97,7 +97,7 @@ void SystemClock_Config(void)
     {
         while(1) {};
     }
-  
+ 
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
        clocks dividers */
     RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
